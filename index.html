@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Style Formatter</title>
+    <style>
+        /* ---  Modern Theme Styling --- */
+        :root {
+            --bg-primary: #1a1d24;
+            --bg-secondary: #23272f;
+            --bg-tertiary: #2b2f38;
+            --channel-textarea: #1e2128;
+            --text-normal: #e8eaed;
+            --text-muted: #9ca3af;
+            --blurple: #6366f1;
+            --blurple-hover: #4f46e5;
+            --green: #10b981;
+            --green-hover: #059669;
+            --accent-glow: rgba(99, 102, 241, 0.2);
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-normal);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--bg-secondary);
+            width: 100%;
+            max-width: 1400px;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        h2 { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            color: #fff; 
+            letter-spacing: 2px; 
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Controls */
+        .controls { display: flex; gap: 12px; margin-bottom: 25px; justify-content: center; flex-wrap: wrap; }
+        
+        .btn-mode {
+            background-color: var(--bg-tertiary);
+            color: var(--text-muted);
+            padding: 12px 24px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .btn-mode:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            border-color: var(--blurple);
+            transform: translateY(-2px);
+        }
+        
+        .btn-mode.active {
+            color: white;
+        }
+
+        #mode1.active {
+            background: linear-gradient(135deg, var(--blurple) 0%, #8b5cf6 100%);
+            border-color: var(--blurple);
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        #mode2.active {
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            border-color: #f59e0b;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Text Areas */
+        .io-wrapper { display: flex; gap: 20px; flex-direction: column; }
+        @media (min-width: 768px) { .io-wrapper { flex-direction: row; } }
+        
+        .box { flex: 1; display: flex; flex-direction: column; }
+        
+        label { 
+            color: var(--text-muted); 
+            font-size: 12px; 
+            font-weight: bold; 
+            margin-bottom: 8px; 
+            text-transform: uppercase; 
+        }
+
+        textarea {
+            background-color: var(--channel-textarea);
+            color: var(--text-normal);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            height: 450px;
+            resize: none;
+            outline: none;
+            white-space: pre;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        textarea:focus { 
+            border-color: var(--blurple);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+            background-color: #1a1e25;
+        }
+
+        /* Buttons */
+        .actions { margin-top: 25px; display: flex; justify-content: center; }
+
+        .btn-copy {
+            width: 100%;
+            background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        .btn-copy:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>TEXT TOOLS</h2>
+        
+        <div class="controls">
+            <button id="mode2" class="btn-mode active" onclick="switchMode(2)">Mode 1: Clean Prefix</button>
+            <button id="mode1" class="btn-mode" onclick="switchMode(1)">Mode 2: JSON List</button>
+        </div>
+
+        <div class="io-wrapper">
+            <div class="box">
+                <label>Paste Input Here</label>
+                <textarea id="inputText" placeholder="Example for Mode 2:&#10;email:pass:token&#10;email:pass:token"></textarea>
+            </div>
+            <div class="box">
+                <label>Result Output</label>
+                <textarea id="outputText" readonly placeholder="Result will appear line by line..."></textarea>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-copy" onclick="copyText()">COPY OUTPUT</button>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 2;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            // Update Visuals
+            document.getElementById('mode1').classList.toggle('active', mode === 1);
+            document.getElementById('mode2').classList.toggle('active', mode === 2);
+            
+            // Re-process if text exists
+            processText();
+        }
+
+        function processText() {
+            const rawInput = document.getElementById('inputText').value;
+            const outputBox = document.getElementById('outputText');
+            
+            if (!rawInput.trim()) {
+                outputBox.value = "";
+                return;
+            }
+
+            // Split input into lines
+            const lines = rawInput.split(/\r?\n/);
+            let result = "";
+            let processedLines = [];
+
+            if (currentMode === 1) {
+                // --- MODE 1: Transform to ["text", "text"] ---
+                const validLines = lines
+                    .map(l => l.trim())
+                    .filter(l => l.length > 0); // Remove empty lines
+                
+                // Format as JSON array
+                result = JSON.stringify(validLines);
+            } 
+            else if (currentMode === 2) {
+                // --- MODE 2: Remove content before SECOND colon ---
+                // Output: Line by Line
+                
+                processedLines = lines.map(line => {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) return null; // Skip empty lines
+
+                    // Find the SECOND colon (or last colon for email:pass:token pattern)
+                    const firstColonIndex = trimmedLine.indexOf(':');
+                    if (firstColonIndex === -1) return trimmedLine;
+                    
+                    const secondColonIndex = trimmedLine.indexOf(':', firstColonIndex + 1);
+                    
+                    if (secondColonIndex !== -1) {
+                        // Return everything AFTER the second colon
+                        return trimmedLine.substring(secondColonIndex + 1).trim();
+                    } else {
+                        // If only one colon, return after first colon
+                        return trimmedLine.substring(firstColonIndex + 1).trim();
+                    }
+                }).filter(l => l !== null); // Remove nulls (empty lines)
+
+                // JOIN WITH NEWLINE (\n) to ensure "Line Under Line"
+                result = processedLines.join('\n');
+            }
+
+            outputBox.value = result;
+        }
+
+        function copyText() {
+            const output = document.getElementById('outputText');
+            if(!output.value) return;
+            
+            output.select();
+            document.execCommand('copy');
+            
+            // Visual feedback
+            const btn = document.querySelector('.btn-copy');
+            const originalText = btn.innerText;
+            btn.innerText = "COPIED!";
+            setTimeout(() => btn.innerText = originalText, 1500);
+        }
+        
+        // Auto-run when typing (optional)
+        document.getElementById('inputText').addEventListener('input', processText);
+
+    </script>
+</body>
+</html>
