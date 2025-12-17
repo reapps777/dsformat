@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="https://images.scalebranding.com/retro-robot-cartoon-mascot-logo-0ebb2526-20cf-4210-a018-06592dce847b.png">
-    <title>DS Tokens Formatter</title>
+    <title>Style Formatter</title>
     <style>
         /* ---  Modern Theme Styling --- */
         :root {
@@ -94,6 +93,12 @@
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
         }
 
+        #mode3.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #10b981;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
         /* Text Areas */
         .io-wrapper { display: flex; gap: 20px; flex-direction: column; }
         @media (min-width: 768px) { .io-wrapper { flex-direction: row; } }
@@ -136,6 +141,7 @@
 
         .btn-copy {
             width: 100%;
+            max-width: 300px;
             background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
             color: white;
             border: none;
@@ -162,12 +168,13 @@
         <div class="controls">
             <button id="mode2" class="btn-mode active" onclick="switchMode(2)">Mode 1: Clean Prefix</button>
             <button id="mode1" class="btn-mode" onclick="switchMode(1)">Mode 2: JSON List</button>
+            <button id="mode3" class="btn-mode" onclick="switchMode(3)">Mode 3: Join Lines</button>
         </div>
 
         <div class="io-wrapper">
             <div class="box">
                 <label>Paste Input Here</label>
-                <textarea id="inputText" placeholder="Example for Mode 2:&#10;email:pass:token&#10;email:pass:token"></textarea>
+                <textarea id="inputText" placeholder="Example:&#10;email:pass:token&#10;email:pass:token"></textarea>
             </div>
             <div class="box">
                 <label>Result Output</label>
@@ -188,6 +195,17 @@
             // Update Visuals
             document.getElementById('mode1').classList.toggle('active', mode === 1);
             document.getElementById('mode2').classList.toggle('active', mode === 2);
+            document.getElementById('mode3').classList.toggle('active', mode === 3);
+            
+            // Update placeholder based on mode
+            const inputBox = document.getElementById('inputText');
+            if (mode === 1) {
+                inputBox.placeholder = "Example:\ntoken1\ntoken2\ntoken3";
+            } else if (mode === 2) {
+                inputBox.placeholder = "Example:\nemail:pass:token\nemail:pass:token";
+            } else if (mode === 3) {
+                inputBox.placeholder = "Example:\ntext1\ntext2\ntext3";
+            }
             
             // Re-process if text exists
             processText();
@@ -242,6 +260,15 @@
                 // JOIN WITH NEWLINE (\n) to ensure "Line Under Line"
                 result = processedLines.join('\n');
             }
+            else if (currentMode === 3) {
+                // --- MODE 3: Join all lines into single line with spaces ---
+                const validLines = lines
+                    .map(l => l.trim())
+                    .filter(l => l.length > 0); // Remove empty lines
+                
+                // Join with single space
+                result = validLines.join(' ');
+            }
 
             outputBox.value = result;
         }
@@ -265,5 +292,4 @@
 
     </script>
 </body>
-
 </html>
