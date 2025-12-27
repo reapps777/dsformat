@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="logo.png" type="https://images.mybrandnewlogo.com/articles/colors/22222f4a69a808677c1bcb21ac6796c5c9ee26430-480x360-center.jpg">
     <title>Style Formatter</title>
     <style>
         /* ---  Modern Theme Styling --- */
@@ -100,6 +99,12 @@
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
 
+        #mode4.active {
+            background: linear-gradient(135deg, #eab308 0%, #f59e0b 100%);
+            border-color: #eab308;
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+        }
+
         /* Text Areas */
         .io-wrapper { display: flex; gap: 20px; flex-direction: column; }
         @media (min-width: 768px) { .io-wrapper { flex-direction: row; } }
@@ -170,6 +175,7 @@
             <button id="mode2" class="btn-mode active" onclick="switchMode(2)">Mode 1: Clean Prefix</button>
             <button id="mode1" class="btn-mode" onclick="switchMode(1)">Mode 2: JSON List</button>
             <button id="mode3" class="btn-mode" onclick="switchMode(3)">Mode 3: Join Lines</button>
+            <button id="mode4" class="btn-mode" onclick="switchMode(4)">Mode 4: Proxy Edit</button>
         </div>
 
         <div class="io-wrapper">
@@ -197,6 +203,7 @@
             document.getElementById('mode1').classList.toggle('active', mode === 1);
             document.getElementById('mode2').classList.toggle('active', mode === 2);
             document.getElementById('mode3').classList.toggle('active', mode === 3);
+            document.getElementById('mode4').classList.toggle('active', mode === 4);
             
             // Update placeholder based on mode
             const inputBox = document.getElementById('inputText');
@@ -206,6 +213,8 @@
                 inputBox.placeholder = "Example:\nemail:pass:token\nemail:pass:token";
             } else if (mode === 3) {
                 inputBox.placeholder = "Example:\ntext1\ntext2\ntext3";
+            } else if (mode === 4) {
+                inputBox.placeholder = "Example:\n31.59.33.41:6617:wpglbabi:egv1r7dzcu0m";
             }
             
             // Re-process if text exists
@@ -270,6 +279,33 @@
                 // Join with single space
                 result = validLines.join(' ');
             }
+            else if (currentMode === 4) {
+                // --- MODE 4: Proxy Edit - Convert IP:PORT:USER:PASS to USER:PASS@IP:PORT ---
+                processedLines = lines.map(line => {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) return null; // Skip empty lines
+
+                    // Split by colon
+                    const parts = trimmedLine.split(':');
+                    
+                    // Need exactly 4 parts: IP, PORT, USERNAME, PASSWORD
+                    if (parts.length === 4) {
+                        const ip = parts[0];
+                        const port = parts[1];
+                        const username = parts[2];
+                        const password = parts[3];
+                        
+                        // Return in format: USERNAME:PASSWORD@IP:PORT
+                        return `${username}:${password}@${ip}:${port}`;
+                    } else {
+                        // If format doesn't match, return as is
+                        return trimmedLine;
+                    }
+                }).filter(l => l !== null); // Remove nulls (empty lines)
+
+                // JOIN WITH NEWLINE (\n)
+                result = processedLines.join('\n');
+            }
 
             outputBox.value = result;
         }
@@ -294,4 +330,3 @@
     </script>
 </body>
 </html>
-
