@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2919/2919906.png" type="image/png">
     <title>Style Formatter</title>
     <style>
         /* ---  Modern Theme Styling --- */
@@ -105,6 +106,12 @@
             box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
         }
 
+        #mode5.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-color: #3b82f6;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
         /* Text Areas */
         .io-wrapper { display: flex; gap: 20px; flex-direction: column; }
         @media (min-width: 768px) { .io-wrapper { flex-direction: row; } }
@@ -176,6 +183,7 @@
             <button id="mode1" class="btn-mode" onclick="switchMode(1)">Mode 2: JSON List</button>
             <button id="mode3" class="btn-mode" onclick="switchMode(3)">Mode 3: Join Lines</button>
             <button id="mode4" class="btn-mode" onclick="switchMode(4)">Mode 4: Proxy Edit</button>
+            <button id="mode5" class="btn-mode" onclick="switchMode(5)">Mode 5: Random Proxies</button>
         </div>
 
         <div class="io-wrapper">
@@ -204,6 +212,7 @@
             document.getElementById('mode2').classList.toggle('active', mode === 2);
             document.getElementById('mode3').classList.toggle('active', mode === 3);
             document.getElementById('mode4').classList.toggle('active', mode === 4);
+            document.getElementById('mode5').classList.toggle('active', mode === 5);
             
             // Update placeholder based on mode
             const inputBox = document.getElementById('inputText');
@@ -215,6 +224,8 @@
                 inputBox.placeholder = "Example:\ntext1\ntext2\ntext3";
             } else if (mode === 4) {
                 inputBox.placeholder = "Example:\n31.59.33.41:6617:wpglbabi:egv1r7dzcu0m";
+            } else if (mode === 5) {
+                inputBox.placeholder = "Example:\nuser:pass@1.1.1.1:8080 user:pass@2.2.2.2:8080";
             }
             
             // Re-process if text exists
@@ -305,6 +316,22 @@
 
                 // JOIN WITH NEWLINE (\n)
                 result = processedLines.join('\n');
+            }
+            else if (currentMode === 5) {
+                // --- MODE 5: Random Proxies - Shuffle space-separated proxies ---
+                const trimmedInput = rawInput.trim();
+                
+                // Split by spaces (or multiple spaces)
+                const proxies = trimmedInput.split(/\s+/).filter(p => p.length > 0);
+                
+                // Shuffle array using Fisher-Yates algorithm
+                for (let i = proxies.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [proxies[i], proxies[j]] = [proxies[j], proxies[i]];
+                }
+                
+                // Join back with single space
+                result = proxies.join(' ');
             }
 
             outputBox.value = result;
