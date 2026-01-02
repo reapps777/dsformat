@@ -330,8 +330,8 @@
                     [proxies[i], proxies[j]] = [proxies[j], proxies[i]];
                 }
                 
-                // Join back with single space
-                result = proxies.join(' ');
+                // Join with newline for line-by-line output
+                result = proxies.join('\n');
             }
 
             outputBox.value = result;
